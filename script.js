@@ -145,7 +145,7 @@ function reformatEmail(emailContent, fullName) {
         // Clean subject (remove FW:, etc.)
         let cleanSubject = secondSubjectLine.replace(/^Subject: /, '').replace(/^(FW:|RE:|FWD:)\s*/i, "").trim();
         
-        // Format the new email preserving the original headers
+        // Format the new email preserving the original 
         let reformattedEmail = 
 `${firstFromLine}
 ${firstSentLine}
