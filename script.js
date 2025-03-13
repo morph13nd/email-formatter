@@ -32,43 +32,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function reformatEmail(emailContent, fullName) {
         try {
-            // Extract recipient email (To field in original email)
-            const toMatch = emailContent.match(/To: ([^\n\r]+)/);
-            if (!toMatch) throw new Error("Couldn't find 'To:' field");
-            const recipientEmail = toMatch[1].trim();
+            // Extract the original sender's email (from first From: line)
+            const originalSenderMatch = emailContent.match(/^From: [^<]*<([^>]+)>/m);
+            if (!originalSenderMatch) throw new Error("Couldn't find original sender email");
+            const originalSenderEmail = originalSenderMatch[1].trim();
             
-            // Extract sent date and time
-            const sentMatch = emailContent.match(/Sent: ([^\n\r]+)/);
-            if (!sentMatch) throw new Error("Couldn't find 'Sent:' field");
-            const sentDateTime = sentMatch[1].trim();
+            // Find the forwarded email section (the inner email)
+            const innerEmailMatch = emailContent.match(/From: [^\n]+On Behalf Of ([^\n\r]+)\r?\nSent: ([^\n\r]+)\r?\nTo: ([^\n\r]+)\r?\nSubject: ([^\n\r]+)/);
             
-            // Extract subject
-            const subjectMatch = emailContent.match(/Subject: ([^\n\r]+)/);
-            if (!subjectMatch) throw new Error("Couldn't find 'Subject:' field");
-            const subject = subjectMatch[1].trim();
+            if (!innerEmailMatch) throw new Error("Couldn't parse the forwarded email");
             
-            // Extract the actual sender email (from the original sender)
-            let senderEmail = "unknown@example.com"; // Default fallback
-            
-            // Look for "On Behalf Of" format first
-            if (emailContent.includes("On Behalf Of")) {
-                const onBehalfMatch = emailContent.match(/On Behalf Of ([^\s\n\r]+)/);
-                if (onBehalfMatch) {
-                    senderEmail = onBehalfMatch[1].trim();
-                }
-            } else {
-                // Try to extract from regular From field
-                const fromMatch = emailContent.match(/From: ([^\n\r]+)/);
-                if (fromMatch) {
-                    const fromLine = fromMatch[1].trim();
-                    const emailInBrackets = fromLine.match(/<([^>]+)>/);
-                    if (emailInBrackets) {
-                        senderEmail = emailInBrackets[1];
-                    } else {
-                        senderEmail = fromLine;
-                    }
-                }
-            }
+            const actualSender = innerEmailMatch[1].trim();
+            const sentDateTime = innerEmailMatch[2].trim();
+            const recipientEmail = innerEmailMatch[3].trim();
+            const subject = innerEmailMatch[4].trim();
             
             // Format date for forwarded message
             const dateParts = sentDateTime.match(/([A-Za-z]+), ([A-Za-z]+) (\d+), (\d+) (\d+):(\d+) ([AP]M)/);
@@ -84,22 +61,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Extract body content - everything after the subject line
-            const bodyStartIndex = emailContent.indexOf(subject) + subject.length;
-            let bodyContent = emailContent.substring(bodyStartIndex).trim();
+            const bodyStartIndex = emailContent.indexOf("Dear Debrah,");
+            if (bodyStartIndex === -1) throw new Error("Couldn't find email body");
+            const bodyContent = emailContent.substring(bodyStartIndex);
             
-            // Format the reformatted email
+            // Format the new email
             const reformattedEmail = 
-`From: ${fullName} <${recipientEmail}> 
+`From: ${fullName} ${recipientEmail} 
 Sent: ${sentDateTime}
-To: ${recipientEmail}
+To: ${originalSenderEmail}
 Subject: Fwd: ${subject}
 
 
 ---------- Forwarded message ---------
-From: <${senderEmail}>
+From: ${actualSender}
 Date: ${formattedDate}
 Subject: ${subject}
-To: <${recipientEmail}>
+To: ${recipientEmail}
 
 ${bodyContent}`;
 
