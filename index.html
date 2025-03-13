@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Formatter Tool for AM YISRAEL CHAI Submission</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Email Format Converter</h1>
+        <p>Paste the incorrectly formatted email below and get it reformatted properly.</p>
+        
+        <div class="form-group">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" placeholder="Debrah Pavlich" value="Debrah Pavlich">
+        </div>
+        
+        <div class="email-container">
+            <div class="input-section">
+                <h2>Input: Incorrectly Formatted Email</h2>
+                <textarea id="inputEmail" placeholder="Paste the incorrectly formatted email here..."></textarea>
+            </div>
+            
+            <button id="convertButton">Convert Format</button>
+            
+            <div class="output-section">
+                <h2>Output: Properly Formatted Email</h2>
+                <textarea id="outputEmail" placeholder="Converted email will appear here..." readonly></textarea>
+                <button id="copyButton">Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Created with ❤️ | <a href="https://github.com/YOUR-USERNAME/email-formatter" target="_blank">View on GitHub</a></p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
