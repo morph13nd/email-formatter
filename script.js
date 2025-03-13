@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     convertButton.addEventListener('click', function() {
         const inputEmail = inputEmailTextarea.value;
-        const fullName = fullNameInput.value || 'Debrah Pavlich';
+        const fullName = fullNameInput.value || 'Oliver Mobasser';
         
         if (!inputEmail.trim()) {
             alert('Please paste an email to format');
@@ -32,31 +32,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function reformatEmail(emailContent, fullName) {
         try {
-            // Extract recipient email (To field in original email - will be used as sender in forwarded email)
+            // Extract sender email
             const toMatch = emailContent.match(/To: ([^\n\r]+)/);
             if (!toMatch) throw new Error("Couldn't find 'To:' field");
-            const originalRecipient = toMatch[1].trim();
-            
-            // Extract sender email (From field in original email - will be used in the forwarded message section)
-            const fromMatch = emailContent.match(/From: ([^\n\r]+)/);
-            if (!fromMatch) throw new Error("Couldn't find 'From:' field");
-            let originalSender = fromMatch[1].trim();
-            
-            // Extract the actual sender email, handling complex "On Behalf Of" cases
-            let senderEmail = "azm@votem.com"; // Default fallback
-            if (originalSender.includes("On Behalf Of")) {
-                const onBehalfMatch = originalSender.match(/On Behalf Of ([^\s]+)/);
-                if (onBehalfMatch) {
-                    senderEmail = onBehalfMatch[1].trim();
-                }
-            } else {
-                const emailMatches = originalSender.match(/<([^>]+)>/g);
-                if (emailMatches && emailMatches.length > 0) {
-                    // Get the last email match and remove brackets
-                    const lastEmail = emailMatches[emailMatches.length-1];
-                    senderEmail = lastEmail.replace('<', '').replace('>', '');
-                }
-            }
+            const senderEmail = toMatch[1].trim();
             
             // Extract sent date and time
             const sentMatch = emailContent.match(/Sent: ([^\n\r]+)/);
@@ -84,20 +63,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const bodyStartIndex = emailContent.indexOf(subject) + subject.length;
             let bodyContent = emailContent.substring(bodyStartIndex).trim();
             
-            // Format the reformatted email with a placeholder for new recipient
-            // In a real application, you'd have a field for the user to enter this
+            // Format the new email
             const reformattedEmail = 
-`From: ${fullName} <${originalRecipient}> 
+`From: ${fullName} <${senderEmail}> 
 Sent: ${sentDateTime}
-To: [ENTER_RECIPIENT_EMAIL]
+To: oliver.tran@live.com
 Subject: Fwd: ${subject}
 
 
 ---------- Forwarded message ---------
-From: <${senderEmail}>
+From: <azm@votem.com>
 Date: ${formattedDate}
 Subject: ${subject}
-To: <${originalRecipient}>
+To: <${senderEmail}>
 
 ${bodyContent}`;
 
