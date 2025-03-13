@@ -32,52 +32,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function reformatEmail(emailContent, fullName) {
         try {
-            // Extract the original sender's email (from the first From: line)
-            const firstFromMatch = emailContent.match(/From: [^<]*<([^>]+)>/);
-            if (!firstFromMatch) throw new Error("Couldn't find original sender email");
-            const firstSenderEmail = firstFromMatch[1].trim();
+            // Extract recipient email (To field in original email)
+            const toMatch = emailContent.match(/To: ([^\n\r]+)/);
+            if (!toMatch) throw new Error("Couldn't find 'To:' field");
+            const recipientEmail = toMatch[1].trim();
             
-            // Find the forwarded email section markers
-            const parts = emailContent.split(/\n\s*\n/);
-            let forwardedSection = '';
-            
-            for (let i = 1; i < parts.length; i++) {
-                if (parts[i].trim().startsWith('From:')) {
-                    forwardedSection = parts[i];
-                    break;
-                }
-            }
-            
-            if (!forwardedSection) throw new Error("Couldn't find forwarded section");
-            
-            // Extract details from forwarded section
-            const forwardedFromMatch = forwardedSection.match(/From:.*On Behalf Of ([^\r\n]+)/);
-            let actualSender = '';
-            
-            if (forwardedFromMatch) {
-                actualSender = forwardedFromMatch[1].trim();
-            } else {
-                const simpleFromMatch = forwardedSection.match(/From:.*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
-                if (simpleFromMatch) {
-                    actualSender = simpleFromMatch[1].trim();
-                }
-            }
-            
-            // Extract sent date
-            const sentMatch = forwardedSection.match(/Sent: ([^\r\n]+)/);
-            if (!sentMatch) throw new Error("Couldn't find sent date");
+            // Extract sent date and time
+            const sentMatch = emailContent.match(/Sent: ([^\n\r]+)/);
+            if (!sentMatch) throw new Error("Couldn't find 'Sent:' field");
             const sentDateTime = sentMatch[1].trim();
             
-            // Extract original recipient
-            const toMatch = forwardedSection.match(/To: ([^\r\n]+)/);
-            if (!toMatch) throw new Error("Couldn't find original recipient");
-            const originalRecipient = toMatch[1].trim();
-            
             // Extract subject
-            const subjectMatch = forwardedSection.match(/Subject: ([^\r\n]+)/);
-            if (!subjectMatch) throw new Error("Couldn't find subject");
-            let subject = subjectMatch[1].trim();
-            subject = subject.replace(/^(FW:|RE:|FWD:)\s*/i, "");
+            const subjectMatch = emailContent.match(/Subject: ([^\n\r]+)/);
+            if (!subjectMatch) throw new Error("Couldn't find 'Subject:' field");
+            const subject = subjectMatch[1].trim();
+            
+            // Extract the actual sender email (from the original sender)
+            let senderEmail = "unknown@example.com"; // Default fallback
+            
+            // Look for "On Behalf Of" format first
+            if (emailContent.includes("On Behalf Of")) {
+                const onBehalfMatch = emailContent.match(/On Behalf Of ([^\s\n\r]+)/);
+                if (onBehalfMatch) {
+                    senderEmail = onBehalfMatch[1].trim();
+                }
+            } else {
+                // Try to extract from regular From field
+                const fromMatch = emailContent.match(/From: ([^\n\r]+)/);
+                if (fromMatch) {
+                    const fromLine = fromMatch[1].trim();
+                    const emailInBrackets = fromLine.match(/<([^>]+)>/);
+                    if (emailInBrackets) {
+                        senderEmail = emailInBrackets[1];
+                    } else {
+                        senderEmail = fromLine;
+                    }
+                }
+            }
             
             // Format date for forwarded message
             const dateParts = sentDateTime.match(/([A-Za-z]+), ([A-Za-z]+) (\d+), (\d+) (\d+):(\d+) ([AP]M)/);
@@ -92,24 +83,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 formattedDate = `${dayOfWeek}, ${month} ${day}, ${year} at ${time}`;
             }
             
-            // Extract body content
-            const bodyStartIndex = emailContent.indexOf("Dear ");
-            if (bodyStartIndex === -1) throw new Error("Couldn't find email body");
-            const bodyContent = emailContent.substring(bodyStartIndex);
+            // Extract body content - everything after the subject line
+            const bodyStartIndex = emailContent.indexOf(subject) + subject.length;
+            let bodyContent = emailContent.substring(bodyStartIndex).trim();
             
-            // Format the new email
+            // Format the reformatted email
             const reformattedEmail = 
-`From: ${fullName} ${originalRecipient}
+`From: ${fullName} <${recipientEmail}> 
 Sent: ${sentDateTime}
-To: ${firstSenderEmail}
+To: ${recipientEmail}
 Subject: Fwd: ${subject}
 
 
 ---------- Forwarded message ---------
-From: ${actualSender}
+From: <${senderEmail}>
 Date: ${formattedDate}
 Subject: ${subject}
-To: ${originalRecipient}
+To: <${recipientEmail}>
 
 ${bodyContent}`;
 
