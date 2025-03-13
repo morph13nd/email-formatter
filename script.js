@@ -139,7 +139,7 @@ Sent: ${sentDateTime}
 To: ${firstSenderEmail}
 Subject: Fwd: ${subject}`;
             
-            // Construct the forwarded message section
+            // Construct the forwarded message section - THE KEY FIX IS HERE
             const forwardedMessageSection = 
 `---------- Forwarded message ---------
 From: ${senderEmail}
