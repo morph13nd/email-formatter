@@ -32,20 +32,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function reformatEmail(emailContent, fullName) {
         try {
-            // Extract the original sender's email (from first From: line)
-            const originalSenderMatch = emailContent.match(/^From: [^<]*<([^>]+)>/m);
-            if (!originalSenderMatch) throw new Error("Couldn't find original sender email");
-            const originalSenderEmail = originalSenderMatch[1].trim();
+            // Extract the original sender's email (from the first From: line)
+            const firstFromMatch = emailContent.match(/From: [^<]*<([^>]+)>/);
+            if (!firstFromMatch) throw new Error("Couldn't find original sender email");
+            const firstSenderEmail = firstFromMatch[1].trim();
             
-            // Find the forwarded email section (the inner email)
-            const innerEmailMatch = emailContent.match(/From: [^\n]+On Behalf Of ([^\n\r]+)\r?\nSent: ([^\n\r]+)\r?\nTo: ([^\n\r]+)\r?\nSubject: ([^\n\r]+)/);
+            // Find the forwarded email section markers
+            const parts = emailContent.split(/\n\s*\n/);
+            let forwardedSection = '';
             
-            if (!innerEmailMatch) throw new Error("Couldn't parse the forwarded email");
+            for (let i = 1; i < parts.length; i++) {
+                if (parts[i].trim().startsWith('From:')) {
+                    forwardedSection = parts[i];
+                    break;
+                }
+            }
             
-            const actualSender = innerEmailMatch[1].trim();
-            const sentDateTime = innerEmailMatch[2].trim();
-            const recipientEmail = innerEmailMatch[3].trim();
-            const subject = innerEmailMatch[4].trim();
+            if (!forwardedSection) throw new Error("Couldn't find forwarded section");
+            
+            // Extract details from forwarded section
+            const forwardedFromMatch = forwardedSection.match(/From:.*On Behalf Of ([^\r\n]+)/);
+            let actualSender = '';
+            
+            if (forwardedFromMatch) {
+                actualSender = forwardedFromMatch[1].trim();
+            } else {
+                const simpleFromMatch = forwardedSection.match(/From:.*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+                if (simpleFromMatch) {
+                    actualSender = simpleFromMatch[1].trim();
+                }
+            }
+            
+            // Extract sent date
+            const sentMatch = forwardedSection.match(/Sent: ([^\r\n]+)/);
+            if (!sentMatch) throw new Error("Couldn't find sent date");
+            const sentDateTime = sentMatch[1].trim();
+            
+            // Extract original recipient
+            const toMatch = forwardedSection.match(/To: ([^\r\n]+)/);
+            if (!toMatch) throw new Error("Couldn't find original recipient");
+            const originalRecipient = toMatch[1].trim();
+            
+            // Extract subject
+            const subjectMatch = forwardedSection.match(/Subject: ([^\r\n]+)/);
+            if (!subjectMatch) throw new Error("Couldn't find subject");
+            let subject = subjectMatch[1].trim();
+            subject = subject.replace(/^(FW:|RE:|FWD:)\s*/i, "");
             
             // Format date for forwarded message
             const dateParts = sentDateTime.match(/([A-Za-z]+), ([A-Za-z]+) (\d+), (\d+) (\d+):(\d+) ([AP]M)/);
@@ -60,16 +92,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 formattedDate = `${dayOfWeek}, ${month} ${day}, ${year} at ${time}`;
             }
             
-            // Extract body content - everything after the subject line
-            const bodyStartIndex = emailContent.indexOf("Dear Debrah,");
+            // Extract body content
+            const bodyStartIndex = emailContent.indexOf("Dear ");
             if (bodyStartIndex === -1) throw new Error("Couldn't find email body");
             const bodyContent = emailContent.substring(bodyStartIndex);
             
             // Format the new email
             const reformattedEmail = 
-`From: ${fullName} ${recipientEmail} 
+`From: ${fullName} ${originalRecipient}
 Sent: ${sentDateTime}
-To: ${originalSenderEmail}
+To: ${firstSenderEmail}
 Subject: Fwd: ${subject}
 
 
@@ -77,7 +109,7 @@ Subject: Fwd: ${subject}
 From: ${actualSender}
 Date: ${formattedDate}
 Subject: ${subject}
-To: ${recipientEmail}
+To: ${originalRecipient}
 
 ${bodyContent}`;
 
