@@ -207,7 +207,7 @@
         const submitButton = document.getElementById('submitPassword');
         const errorMessage = document.getElementById('errorMessage');
         
-        // Base64 encoded version of "theroadto5000"
+        
         const encodedCorrectPassword = "dGhlcm9hZHRvNTAwMA==";
         
         // Function to check password
