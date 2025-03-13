@@ -1,3 +1,41 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const fullNameInput = document.getElementById('fullName');
+    const inputEmailTextarea = document.getElementById('inputEmail');
+    const outputEmailTextarea = document.getElementById('outputEmail');
+    const convertButton = document.getElementById('convertButton');
+    const copyButton = document.getElementById('copyButton');
+
+    convertButton.addEventListener('click', function() {
+        const inputEmail = inputEmailTextarea.value;
+        const fullName = fullNameInput.value || '<Update to the Voter\'s Name>';
+        
+        if (!inputEmail.trim()) {
+            alert('Please paste an email to format');
+            return;
+        }
+        
+        const formattedEmail = reformatEmail(inputEmail, fullName);
+        outputEmailTextarea.value = formattedEmail;
+    });
+
+    copyButton.addEventListener('click', function() {
+        outputEmailTextarea.select();
+        document.execCommand('copy');
+        
+        // Change button text temporarily
+        const originalText = copyButton.textContent;
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+            copyButton.textContent = originalText;
+        }, 2000);
+    });
+
+    // Your reformatEmail function goes here
+    function reformatEmail(emailContent, fullName) {
+        // Your existing function code
+    }
+});
+
 function reformatEmail(emailContent, fullName) {
     try {
         // We'll start by splitting the email into sections
