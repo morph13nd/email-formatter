@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     convertButton.addEventListener('click', function() {
         const inputEmail = inputEmailTextarea.value;
-        const fullName = fullNameInput.value || 'Oliver Mobasser';
+        const fullName = fullNameInput.value || 'Debrah Pavlich';
         
         if (!inputEmail.trim()) {
             alert('Please paste an email to format');
