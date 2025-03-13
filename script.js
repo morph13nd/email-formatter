@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     convertButton.addEventListener('click', function() {
         const inputEmail = inputEmailTextarea.value;
-        const fullName = fullNameInput.value || 'Oliver Mobasser';
+        const fullName = fullNameInput.value || 'Debrah Pavlich';
         
         if (!inputEmail.trim()) {
             alert('Please paste an email to format');
@@ -36,6 +36,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const toMatch = emailContent.match(/To: ([^\n\r]+)/);
             if (!toMatch) throw new Error("Couldn't find 'To:' field");
             const senderEmail = toMatch[1].trim();
+            
+            // Extract recipient email (From field in original email)
+            const fromMatch = emailContent.match(/From: ([^\n\r]+)/);
+            if (!fromMatch) throw new Error("Couldn't find 'From:' field");
+            let recipientEmail = fromMatch[1].trim();
+            
+            // Extract email address if the From field contains name and email
+            const emailInBrackets = recipientEmail.match(/<([^>]+)>/);
+            if (emailInBrackets) {
+                recipientEmail = emailInBrackets[1];
+            }
             
             // Extract sent date and time
             const sentMatch = emailContent.match(/Sent: ([^\n\r]+)/);
@@ -67,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const reformattedEmail = 
 `From: ${fullName} <${senderEmail}> 
 Sent: ${sentDateTime}
-To: oliver.tran@live.com
+To: ${recipientEmail}
 Subject: Fwd: ${subject}
 
 
