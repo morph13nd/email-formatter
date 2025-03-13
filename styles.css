@@ -1,138 +1,203 @@
+/* Vaporwave color palette */
+:root {
+    --primary-pink: #ff71ce;
+    --primary-blue: #01cdfe;
+    --primary-purple: #b967ff;
+    --primary-yellow: #fffb96;
+    --primary-cyan: #05ffa1;
+    --dark-bg: #120458;
+    --light-bg: #1a0933;
+}
+
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f9f9f9;
-    padding: 20px;
+    background: linear-gradient(135deg, var(--dark-bg), var(--light-bg));
+    color: white;
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+}
+
+.hebrew-corner {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-yellow);
+    text-shadow: 0 0 10px var(--primary-blue), 
+                 0 0 20px var(--primary-blue),
+                 0 0 30px var(--primary-blue);
+    transform: rotate(0deg);
+    z-index: 100;
 }
 
 .container {
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    color: var(--primary-pink);
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px var(--primary-purple);
+    letter-spacing: 2px;
 }
 
 p {
-    margin-bottom: 20px;
     text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+    font-size: 1.1rem;
 }
 
 .form-group {
-    margin-bottom: 20px;
-    text-align: center;
+    margin-bottom: 2rem;
 }
 
-.form-group label {
-    display: inline-block;
-    margin-right: 10px;
-    font-weight: bold;
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--primary-yellow);
 }
 
-.form-group input {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 300px;
-    font-size: 16px;
+input[type="text"] {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    border: 1px solid var(--primary-blue);
+    box-shadow: 0 0 8px var(--primary-blue);
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 15px var(--primary-blue);
 }
 
 .email-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .email-container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    #convertButton {
+        grid-column: span 2;
+        justify-self: center;
+    }
 }
 
 .input-section, .output-section {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 h2 {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--primary-cyan);
+    text-shadow: 0 0 5px rgba(5, 255, 161, 0.5);
 }
 
 textarea {
     width: 100%;
     height: 300px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    resize: vertical;
-    font-family: monospace;
-    font-size: 14px;
+    padding: 1rem;
+    resize: none;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--primary-purple);
+    box-shadow: 0 0 8px var(--primary-purple);
+    transition: all 0.3s ease;
+}
+
+textarea:focus {
+    outline: none;
+    box-shadow: 0 0 15px var(--primary-purple);
 }
 
 button {
-    padding: 10px 15px;
-    background-color: #3498db;
-    color: white;
+    padding: 0.8rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple));
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(255, 113, 206, 0.5);
 }
 
 button:hover {
-    background-color: #2980b9;
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(255, 113, 206, 0.7);
+}
+
+button:active {
+    transform: translateY(1px);
 }
 
 #convertButton {
-    align-self: center;
-    width: 200px;
+    margin: 1rem auto;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-cyan));
+    box-shadow: 0 4px 15px rgba(1, 205, 254, 0.5);
+}
+
+#convertButton:hover {
+    box-shadow: 0 7px 20px rgba(1, 205, 254, 0.7);
 }
 
 #copyButton {
-    margin-top: 10px;
-    background-color: #27ae60;
-}
-
-#copyButton:hover {
-    background-color: #219653;
+    align-self: flex-end;
 }
 
 footer {
-    margin-top: 30px;
     text-align: center;
-    font-size: 14px;
-    color: #7f8c8d;
+    margin-top: 3rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
 }
 
 footer a {
-    color: #3498db;
+    color: var(--primary-yellow);
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 footer a:hover {
+    color: var(--primary-pink);
     text-decoration: underline;
-}
-
-@media (min-width: 768px) {
-    .email-container {
-        flex-direction: row;
-    }
-    
-    .input-section, .output-section {
-        width: 48%;
-    }
-    
-    #convertButton {
-        align-self: center;
-    }
 }
