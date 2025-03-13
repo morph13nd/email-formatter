@@ -5,15 +5,375 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE SHAAR Instant Verifier Tool for AM YISRAEL CHAI Submission</title>
     <h3>by Oliver Mobasser, your favourite frum hacker.</h3>
-    <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Vaporwave color palette */
+        :root {
+            --primary-pink: #ff71ce;
+            --primary-blue: #01cdfe;
+            --primary-purple: #b967ff;
+            --primary-yellow: #fffb96;
+            --primary-cyan: #05ffa1;
+            --dark-bg: #120458;
+            --light-bg: #1a0933;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--light-bg));
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hebrew-corner {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-yellow);
+            text-shadow: 0 0 10px var(--primary-blue), 
+                        0 0 20px var(--primary-blue),
+                        0 0 30px var(--primary-blue);
+            transform: rotate(0deg);
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary-pink);
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px var(--primary-purple);
+            letter-spacing: 2px;
+        }
+
+        p {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .instructions-container {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(1, 205, 254, 0.3);
+            border: 1px solid var(--primary-blue);
+        }
+
+        .instructions-container h2 {
+            color: var(--primary-yellow);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .instructions-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(255, 113, 206, 0.5);
+        }
+
+        .step-text {
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--primary-yellow);
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            border: 1px solid var(--primary-blue);
+            box-shadow: 0 0 8px var(--primary-blue);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--primary-blue);
+        }
+
+        .email-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .email-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            #convertButton {
+                grid-column: span 2;
+                justify-self: center;
+            }
+        }
+
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-cyan);
+            text-shadow: 0 0 5px rgba(5, 255, 161, 0.5);
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 1rem;
+            resize: none;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--primary-purple);
+            box-shadow: 0 0 8px var(--primary-purple);
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--primary-purple);
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple));
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255, 113, 206, 0.5);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(255, 113, 206, 0.7);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #convertButton {
+            margin: 1rem auto;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-cyan));
+            box-shadow: 0 4px 15px rgba(1, 205, 254, 0.5);
+        }
+
+        #convertButton:hover {
+            box-shadow: 0 7px 20px rgba(1, 205, 254, 0.7);
+        }
+
+        #copyButton {
+            align-self: flex-end;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--primary-yellow);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary-pink);
+            text-decoration: underline;
+        }
+
+        /* Password Overlay Styles */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--dark-bg), var(--light-bg));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .grid-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(var(--primary-blue) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--primary-blue) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: -1px -1px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .password-container {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 20px var(--primary-blue), 0 0 40px var(--primary-purple);
+            border: 1px solid var(--primary-blue);
+            text-align: center;
+            position: relative;
+        }
+        
+        .password-container::before {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px solid var(--primary-pink);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+        
+        .warning {
+            background-color: rgba(255, 113, 206, 0.2);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            color: white;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--primary-pink);
+        }
+        
+        .warning strong {
+            color: var(--primary-yellow);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .error-message {
+            color: var(--primary-pink);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .step {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .step-number {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="grid-background"></div>
+        <div class="hebrew-corner">בסייעתא דשמיא</div>
+        <div class="password-container">
+            <h1>SECURE ACCESS</h1>
+            <h2>AM YISRAEL CHAI</h2>
+            
+            <div class="warning">
+                <strong>AUTHORIZED PERSONNEL ONLY</strong>
+                This tool is exclusively for Team Members of AM YISRAEL CHAI Slate program. 
+                Unauthorized access is prohibited. All activity is tracked and monitored.
+            </div>
+            
+            <input type="password" id="passwordInput" placeholder="Enter Password" autofocus>
+            <button onclick="checkPassword()">ENTER</button>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+    </div>
+
     <div class="hebrew-corner">בסייעתא דשמיא</div>
     
     <div class="container">
         <h1>THE SHAAR Instant Verifier Tool for AM YISRAEL CHAI Submission</h1>
-        <p>Most emails that are forwarded are <i>incorrectly</i> formatted and cannot be read by the voting system (bug in the voting system). This tool fixes the email itself to be properly read by the voting system, and almost instantly gets the vote registered once forwarded to votes@joinayc.org. I'd recommend using this tool to properly format all emails, then copy and paste it into an email and forward to votes@joinayc.org.</p>
+        <p>Most emails that are forwarded are <i>incorrectly</i> formatted and cannot be read by the voting system (bug in the voting system). This tool fixes the email itself to be properly read by the voting system, and almost instantly gets the vote registered once forwarded to votes@joinayc.org.</p>
         
         <div class="instructions-container">
             <h2>How to Use This Tool</h2>
@@ -48,9 +408,7 @@
                 </div>
             </div>
         </div>
-        <br></br>
-        <br></br>
-        <br></br>
+        
         <div class="form-group">
             <label for="fullName">Full Name:</label>
             <input type="text" id="fullName" placeholder="<Update to the Voter's Name>" value="<Update to the Voter's Name">
@@ -74,6 +432,179 @@
     <footer>
         <p>Created with ❤️ by Oliver Mobasser, your favourite frum hacker. For exclusive use by the Shaar team only. | <a href="https://morph13nd.github.io/wzo/" target="_blank">View on GitHub</a></p>
     </footer>
-    <script src="script.js"></script>
+
+    <script>
+        // Password validation with Base64 encoding
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput').value;
+            // Base64 encoded version of "theroadto5000"
+            const encodedCorrectPassword = "dGhlcm9hZHRvNTAwMA==";
+            const errorMessage = document.getElementById('errorMessage');
+            const overlay = document.getElementById('passwordOverlay');
+            
+            // Encode the input password to base64
+            const encodedInput = btoa(passwordInput);
+            
+            if (encodedInput === encodedCorrectPassword) {
+                // Password is correct, remove the overlay
+                overlay.style.transition = "opacity 0.5s ease";
+                overlay.style.opacity = "0";
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                }, 500);
+                
+                // Save in session storage to remember that user is logged in
+                sessionStorage.setItem('authenticated', 'true');
+                
+                // Log successful access
+                console.log("Access granted: " + new Date().toISOString());
+            } else {
+                // Password is incorrect, show error
+                errorMessage.textContent = "Incorrect password. Please try again.";
+                document.getElementById('passwordInput').value = "";
+                
+                // Log attempt
+                console.log("Incorrect password attempt: " + new Date().toISOString());
+            }
+        }
+        
+        // Allow submitting with Enter key
+        document.getElementById('passwordInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // Check if user is already authenticated
+        window.onload = function() {
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                document.getElementById('passwordOverlay').style.display = "none";
+            }
+        };
+
+        // Email formatter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const fullNameInput = document.getElementById('fullName');
+            const inputEmailTextarea = document.getElementById('inputEmail');
+            const outputEmailTextarea = document.getElementById('outputEmail');
+            const convertButton = document.getElementById('convertButton');
+            const copyButton = document.getElementById('copyButton');
+
+            convertButton.addEventListener('click', function() {
+                const inputEmail = inputEmailTextarea.value;
+                const fullName = fullNameInput.value || 'Debrah Pavlich';
+                
+                if (!inputEmail.trim()) {
+                    alert('Please paste an email to format');
+                    return;
+                }
+                
+                const formattedEmail = reformatEmail(inputEmail, fullName);
+                outputEmailTextarea.value = formattedEmail;
+            });
+
+            copyButton.addEventListener('click', function() {
+                outputEmailTextarea.select();
+                document.execCommand('copy');
+                
+                // Change button text temporarily
+                const originalText = copyButton.textContent;
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyButton.textContent = originalText;
+                }, 2000);
+            });
+
+            function reformatEmail(emailContent, fullName) {
+                try {
+                    // Extract the original sender's email (from the first From: line)
+                    const firstFromMatch = emailContent.match(/From: [^<]*<([^>]+)>/);
+                    if (!firstFromMatch) throw new Error("Couldn't find original sender email");
+                    const firstSenderEmail = firstFromMatch[1].trim();
+                    
+                    // Find the forwarded email section markers
+                    const parts = emailContent.split(/\n\s*\n/);
+                    let forwardedSection = '';
+                    
+                    for (let i = 1; i < parts.length; i++) {
+                        if (parts[i].trim().startsWith('From:')) {
+                            forwardedSection = parts[i];
+                            break;
+                        }
+                    }
+                    
+                    if (!forwardedSection) throw new Error("Couldn't find forwarded section");
+                    
+                    // Extract details from forwarded section
+                    const forwardedFromMatch = forwardedSection.match(/From:.*On Behalf Of ([^\r\n]+)/);
+                    let actualSender = '';
+                    
+                    if (forwardedFromMatch) {
+                        actualSender = forwardedFromMatch[1].trim();
+                    } else {
+                        const simpleFromMatch = forwardedSection.match(/From:.*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+                        if (simpleFromMatch) {
+                            actualSender = simpleFromMatch[1].trim();
+                        }
+                    }
+                    
+                    // Extract sent date
+                    const sentMatch = forwardedSection.match(/Sent: ([^\r\n]+)/);
+                    if (!sentMatch) throw new Error("Couldn't find sent date");
+                    const sentDateTime = sentMatch[1].trim();
+                    
+                    // Extract original recipient
+                    const toMatch = forwardedSection.match(/To: ([^\r\n]+)/);
+                    if (!toMatch) throw new Error("Couldn't find original recipient");
+                    const originalRecipient = toMatch[1].trim();
+                    
+                    // Extract subject
+                    const subjectMatch = forwardedSection.match(/Subject: ([^\r\n]+)/);
+                    if (!subjectMatch) throw new Error("Couldn't find subject");
+                    let subject = subjectMatch[1].trim();
+                    subject = subject.replace(/^(FW:|RE:|FWD:)\s*/i, "");
+                    
+                    // Format date for forwarded message
+                    const dateParts = sentDateTime.match(/([A-Za-z]+), ([A-Za-z]+) (\d+), (\d+) (\d+):(\d+) ([AP]M)/);
+                    let formattedDate = sentDateTime;
+                    
+                    if (dateParts) {
+                        const dayOfWeek = dateParts[1].substring(0, 3);
+                        const month = dateParts[2].substring(0, 3);
+                        const day = dateParts[3];
+                        const year = dateParts[4];
+                        const time = `${dateParts[5]}:${dateParts[6]} ${dateParts[7]}`;
+                        formattedDate = `${dayOfWeek}, ${month} ${day}, ${year} at ${time}`;
+                    }
+                    
+                    // Extract body content
+                    const bodyStartIndex = emailContent.indexOf("Dear ");
+                    if (bodyStartIndex === -1) throw new Error("Couldn't find email body");
+                    const bodyContent = emailContent.substring(bodyStartIndex);
+                    
+                    // Format the new email
+                    const reformattedEmail = 
+`From: ${fullName} ${originalRecipient}
+Sent: ${sentDateTime}
+To: ${firstSenderEmail}
+Subject: Fwd: ${subject}
+
+
+---------- Forwarded message ---------
+From: ${actualSender}
+Date: ${formattedDate}
+Subject: ${subject}
+To: ${originalRecipient}
+
+${bodyContent}`;
+
+                    return reformattedEmail;
+                } catch (error) {
+                    console.error("Error reformatting email:", error);
+                    return "Error: Could not parse the email format. Please make sure you've pasted the entire email with headers.";
+                }
+            }
+        });
+    </script>
 </body>
 </html>
